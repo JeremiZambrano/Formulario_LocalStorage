@@ -17,6 +17,18 @@ document.getElementById('clientForm').addEventListener('submit', function(event)
     var emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     var phoneRegex = /^\d{10}$/;
 
+    // Verificar si ya existe un registro con la misma cédula y nombre en localStorage
+    var existingData = JSON.parse(localStorage.getItem('clientData')) || [];
+    var duplicateFound = existingData.some(function(item) {
+        return item.cedula === cedula && item.name === name;
+    });
+
+    if (duplicateFound) {
+        alert('Registro inválido, ya existe este usuario.');
+        return;
+    }
+
+    // Validar los campos usando expresiones regulares
     if (!nameRegex.test(name)) {
         alert('Por favor, ingrese un nombre válido.');
         return;
@@ -43,13 +55,18 @@ document.getElementById('clientForm').addEventListener('submit', function(event)
     }
 
     // Almacenar datos en localStorage
-    localStorage.setItem('name', name);
-    localStorage.setItem('lastName', lastName);
-    localStorage.setItem('birthDate', birthDate);
-    localStorage.setItem('cedula', cedula);
-    localStorage.setItem('address', address);
-    localStorage.setItem('email', email);
-    localStorage.setItem('phone', phone);
+    var client = {
+        name: name,
+        lastName: lastName,
+        birthDate: birthDate,
+        cedula: cedula,
+        address: address,
+        email: email,
+        phone: phone
+    };
+
+    existingData.push(client);
+    localStorage.setItem('clientData', JSON.stringify(existingData));
 
     // Mostrar mensaje de éxito
     document.getElementById('successMessage').style.display = 'block';
